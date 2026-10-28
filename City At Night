@@ -1,0 +1,217 @@
+
+float carX = -110;
+float cloudX = -180;
+
+void setup() {
+  size(800, 600);
+  frameRate(60);
+}
+
+void draw() {
+  // Night sky
+  background(30, 65, 105);
+  noStroke();
+
+  // Twinkling stars
+  float starLight = 150 + 105 * abs(sin(frameCount * 0.025));
+
+  fill(255, 245, 190, starLight);
+  ellipse(80, 70, 4, 4);
+  ellipse(180, 125, 4, 4);
+  ellipse(325, 60, 4, 4);
+  ellipse(470, 140, 4, 4);
+  ellipse(580, 50, 4, 4);
+  ellipse(765, 190, 4, 4);
+
+  // Moving clouds
+  fill(160, 185, 215, 65);
+  ellipse(cloudX, 115, 110, 38);
+  ellipse(cloudX + 40, 125, 100, 32);
+  ellipse(cloudX + 95, 115, 100, 35);
+
+  ellipse(cloudX - 100, 185, 100, 38);
+  ellipse(cloudX - 55, 195, 110, 34);
+  ellipse(cloudX, 185, 100, 36);
+
+  cloudX = cloudX + 0.25;
+
+  if (cloudX > width + 220) {
+    cloudX = -180;
+  }
+
+  // Moon
+  fill(255, 220, 140);
+  ellipse(680, 100, 90, 90);
+
+  // Buildings
+  fill(25, 30, 50);
+  rect(0, 300, 130, 220);
+  rect(130, 250, 140, 270);
+  rect(270, 330, 120, 190);
+  rect(390, 220, 150, 300);
+  rect(540, 290, 110, 230);
+  rect(650, 260, 150, 260);
+
+  // Rooftop antennas
+  stroke(45, 50, 70);
+  strokeWeight(3);
+  line(205, 250, 205, 230);
+  line(465, 220, 465, 195);
+  noStroke();
+
+  // Building windows
+  for (int building = 0; building < 6; building++) {
+
+    int startX = 0;
+    int startY = 0;
+    int columns = 2;
+    int rows = 3;
+
+    if (building == 0) {
+      startX = 25;
+      startY = 330;
+      columns = 2;
+      rows = 3;
+    } else if (building == 1) {
+      startX = 155;
+      startY = 280;
+      columns = 3;
+      rows = 4;
+    } else if (building == 2) {
+      startX = 295;
+      startY = 360;
+      columns = 2;
+      rows = 3;
+    } else if (building == 3) {
+      startX = 410;
+      startY = 250;
+      columns = 3;
+      rows = 4;
+    } else if (building == 4) {
+      startX = 565;
+      startY = 320;
+      columns = 2;
+      rows = 3;
+    } else {
+      startX = 675;
+      startY = 290;
+      columns = 3;
+      rows = 4;
+    }
+
+    for (int col = 0; col < columns; col++) {
+      for (int row = 0; row < rows; row++) {
+
+        // Different windows change at different times
+        int lightTime = frameCount / 150;
+        int lightCycle = (lightTime
+          + building * 3 + col * 2 + row * 4) % 9;
+
+        if (lightCycle == 0 || lightCycle == 5) {
+          fill(105, 100, 90);
+        } else {
+          fill(255, 220, 120);
+        }
+
+        rect(startX + col * 40,
+             startY + row * 50,
+             18, 25);
+      }
+    }
+  }
+
+  // Road
+  fill(45, 48, 65);
+  rect(0, 520, 800, 80);
+
+  // Dashed road markings
+  fill(175, 175, 160);
+  for (int x = 20; x < width; x += 95) {
+    rect(x, 560, 48, 3);
+  }
+
+  // Street lamps
+  stroke(110, 115, 135);
+  strokeWeight(5);
+  line(100, 545, 100, 475);
+  line(620, 545, 620, 475);
+  noStroke();
+
+  // Soft lamp glows
+  fill(255, 210, 105, 22);
+  ellipse(125, 485, 64, 64);
+  ellipse(645, 485, 64, 64);
+
+  fill(255, 220, 125);
+  ellipse(125, 485, 18, 9);
+  ellipse(645, 485, 18, 9);
+
+  // Traffic light pole
+  fill(100, 105, 125);
+  rect(758, 440, 6, 105);
+
+  // Traffic light box
+  fill(35, 40, 55);
+  rect(749, 405, 24, 65);
+
+  // Traffic light timing
+  int trafficCycle = (frameCount / 180) % 2;
+
+  if (trafficCycle == 0) {
+    // Red light
+    fill(255, 65, 65);
+    ellipse(761, 417, 12, 12);
+
+    fill(90, 75, 35);
+    ellipse(761, 438, 12, 12);
+
+    fill(25, 80, 45);
+    ellipse(761, 459, 12, 12);
+  } else {
+    // Green light
+    fill(90, 35, 35);
+    ellipse(761, 417, 12, 12);
+
+    fill(90, 75, 35);
+    ellipse(761, 438, 12, 12);
+
+    fill(0, 230, 110);
+    ellipse(761, 459, 12, 12);
+  }
+
+  // Stop line before traffic light
+  fill(220, 220, 205);
+  rect(735, 525, 4, 45);
+
+  // Moving red car
+  fill(245, 55, 65);
+  rect(carX, 545, 105, 30);
+
+  fill(255, 80, 80);
+  rect(carX + 25, 530, 50, 20);
+
+  // Wheels
+  fill(15, 20, 35);
+  ellipse(carX + 20, 575, 20, 20);
+  ellipse(carX + 85, 575, 20, 20);
+
+  // Car movement
+  // Stop at x = 620 when the light is red
+  if (trafficCycle == 0 && carX < 620) {
+    carX = carX + 2;
+
+    if (carX > 620) {
+      carX = 620;
+    }
+  } else if (trafficCycle == 0 && carX == 620) {
+    // Wait at the red light
+  } else {
+    // Move when green, or after passing the stop point
+    carX = carX + 2;
+  }
+
+  // Restart car after leaving the screen
+  if (carX > width + 10) {
+    carX = -110;
+  }
+}
